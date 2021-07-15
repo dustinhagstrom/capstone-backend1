@@ -1,25 +1,75 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
 const Player = require("../model/Player");
 
-const getAllPlayers = async function (req, res) {
+const signup = async function (req, res, next) {
+  const { firstName, lastName, username, email, password } = req.body;
+
+  // const { errorObj } = res.locals;
   try {
-  } catch (e) {}
+    let salt = await bcrypt.genSalt(12);
+    let hashedPassword = await bcrypt.hash(password, salt);
+
+    const createdPlayer = new Player({
+      firstName,
+      lastName,
+      username,
+      email,
+      password: hashedPassword,
+    });
+
+    let savedPlayer = await createdPlayer.save();
+    res.json({ message: "success - user created", payload: savedPlayer });
+  } catch (e) {
+    next(e);
+  }
 };
-const createPlayer = async function (req, res) {
+const login = async function (req, res, next) {
+  // const { errorObj } = res.locals;
+  const { email, password } = req.body;
   try {
-  } catch (e) {}
-};
-const updatePlayer = async function (req, res) {
-  try {
-  } catch (e) {}
-};
-const deletePlayer = async function (req, res) {
-  try {
-  } catch (e) {}
+    let foundPlayer = await Player.findOne({ email: email });
+
+    if (!foundPlayer) {
+      res.status(400).json({
+        message: "failure",
+        payload: "Please check your email and password.",
+      });
+    } else {
+      let comparedPassword = await bcrypt.compare(
+        password,
+        foundPlayer.password
+      );
+
+      if (!comparedPassword) {
+        res.status(400).json({
+          message: "failure",
+          payload: "Please check your email and password.",
+        });
+      } else {
+        let jwtToken = jwt.sign(
+          {
+            email: foundPlayer.email,
+          },
+          process.env.PRIVATE_JWT_KEY,
+          {
+            expiresIn: "1d",
+          }
+        );
+
+        res.json({
+          message: "success",
+          payload: jwtToken,
+        });
+      }
+    }
+  } catch (e) {
+    next(e);
+  }
 };
 
 module.exports = {
-  getAllPlayers,
-  createPlayer,
-  updatePlayer,
-  deletePlayer,
+  signup,
+  login,
 };

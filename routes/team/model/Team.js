@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const teamSchema = new mongoose.Schema({
+const TeamSchema = new mongoose.Schema({
   teamName: {
     type: String,
   },
@@ -12,4 +12,4 @@ const teamSchema = new mongoose.Schema({
   ],
 });
 
-module.exports = mongoose.model("Player", playerSchema);
+module.exports = mongoose.model("Team", TeamSchema);
