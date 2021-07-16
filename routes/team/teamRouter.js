@@ -1,9 +1,13 @@
 const express = require("express");
-const checkJwtToken = require("../utils/jwtMiddleware");
+const jwtMiddleware = require("../utils/jwtMiddleware");
 const router = express.Router();
 
-const { loadTeamRoster } = require("./controller/teamController");
+const {
+  loadTeamRoster,
+  createNewTeam,
+} = require("./controller/teamController");
 
-router.get("/load-team-roster", checkJwtToken, loadTeamRoster);
+router.get("/load-team-roster", jwtMiddleware, loadTeamRoster);
 
+router.post("/create-team", createNewTeam);
 module.exports = router;

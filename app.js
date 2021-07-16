@@ -5,8 +5,10 @@ const cors = require("cors");
 
 const teamRouter = require("./routes/team/teamRouter");
 const playerRouter = require("./routes/player/playerRouter");
+const creditRouter = require("./routes/creditcard/creditRouter");
 const ErrorMessageHandlerClass = require("./routes/utils/ErrorMessageHandlerClass");
 const errorController = require("./routes/utils/errorController");
+const fakerController = require("./routes/utils/Faker");
 
 const app = express();
 
@@ -20,8 +22,10 @@ if (process.env.NODE_ENV === "development") {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use("/api/faker", fakerController);
 app.use("/api/player", playerRouter);
 app.use("/api/team", teamRouter);
+app.use("/api/cc", creditRouter);
 
 // catch 404 and forward to error handler
 app.all("*", function (req, res, next) {

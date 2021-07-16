@@ -18,4 +18,17 @@ const loadTeamRoster = async function (req, res, next) {
   }
 };
 
-module.exports = { loadTeamRoster };
+const createNewTeam = async function (req, res, next) {
+  const { teamName } = req.body;
+
+  try {
+    const newTeam = new Team({
+      teamName,
+    });
+    const savedNewTeam = await newTeam.save();
+    res.json({ newTeam });
+  } catch (e) {
+    next(e);
+  }
+};
+module.exports = { loadTeamRoster, createNewTeam };
