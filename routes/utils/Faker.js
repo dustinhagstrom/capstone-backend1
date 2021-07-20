@@ -26,6 +26,7 @@ router.post("/make-player-and-cc-data", async function (req, res, next) {
   const fakeUsername = faker.internet.userName();
   const fakeEmail = faker.internet.email();
   const fakePassword = faker.internet.password();
+  const fakeProfileImage = faker.image.people();
 
   try {
     let salt = await bcrypt.genSalt(12);
@@ -36,6 +37,7 @@ router.post("/make-player-and-cc-data", async function (req, res, next) {
       lastName: fakeLastName,
       username: fakeUsername,
       email: fakeEmail,
+      profileImage: fakeProfileImage,
       password: hashedPassword,
     });
 

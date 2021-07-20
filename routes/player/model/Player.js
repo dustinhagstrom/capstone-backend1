@@ -15,6 +15,10 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
+  profileImage: {
+    data: Buffer,
+    contentType: String,
+  },
   password: {
     type: String,
   },
