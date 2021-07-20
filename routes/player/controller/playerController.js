@@ -51,6 +51,7 @@ const login = async function (req, res, next) {
         let jwtToken = jwt.sign(
           {
             email: foundPlayer.email,
+            username: foundPlayer.username,
           },
           process.env.PRIVATE_JWT_KEY,
           {
