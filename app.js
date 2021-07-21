@@ -10,6 +10,7 @@ const creditRouter = require("./routes/creditcard/creditRouter");
 const ErrorMessageHandlerClass = require("./routes/utils/ErrorMessageHandlerClass");
 const errorController = require("./routes/utils/errorController");
 const fakerController = require("./routes/utils/Faker");
+const picsRouter = require("./routes/profilePics/picsRouter");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/faker", fakerController);
 app.use("/api/player", playerRouter);
 app.use("/api/team", teamRouter);
 app.use("/api/cc", creditRouter);
+app.use("/api/pics", picsRouter);
 
 // catch 404 and forward to error handler
 app.all("*", function (req, res, next) {

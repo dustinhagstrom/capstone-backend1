@@ -1,8 +1,5 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
 
 const Player = require("../model/Player");
 
@@ -73,22 +70,24 @@ const login = async function (req, res, next) {
   }
 };
 
-const fetchProfileImage = async function (req, res, next) {
-  try {
-    let foundAllPics = Player.find({});
-    console.log(foundAllPics);
-  } catch (e) {
-    next(e);
-  }
-};
-
 const addProfileImage = async function (req, res, next) {
+  const imgObj = {
+    profileImage: {
+      data: fs.readFileSync(
+        path.join(process.env.MY_DIRECTORY, "/uploads/" + req.file.filename)
+      ),
+      contentType: "image/jpg",
+    },
+  };
   try {
-    const imgObj = {
-      img: {
-        data: fs.readFileSync(path.join(process.env.MY_DIRECTORY, "/uploads/")),
-      },
-    };
+    let addedPicToPlayer = await Player.findByIdAndUpdate(
+      req.params.id,
+      imgObj,
+      {
+        new: true,
+      }
+    ).select("-__v");
+    res.json({ message: "success", payload: addedPicToPlayer });
   } catch (e) {
     next(e);
   }
@@ -98,5 +97,4 @@ module.exports = {
   signup,
   login,
   addProfileImage,
-  fetchProfileImage,
 };

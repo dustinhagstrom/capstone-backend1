@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -15,15 +16,12 @@ const {
   signup,
   login,
   addProfileImage,
-  fetchProfileImage,
 } = require("./controller/playerController");
 
 router.post("/signup", signup);
 
 router.post("/login", login);
 
-router.post("/add-profile-image", upload.single("image"), addProfileImage);
-
-router.get("/fetch-profile-image", fetchProfileImage);
+router.put("/add-profile-image", upload.single("image"), addProfileImage);
 
 module.exports = router;

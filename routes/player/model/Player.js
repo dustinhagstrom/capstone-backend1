@@ -16,8 +16,8 @@ const PlayerSchema = new mongoose.Schema({
     unique: true,
   },
   profileImage: {
-    data: Buffer,
-    contentType: String,
+    type: mongoose.Schema.ObjectId,
+    ref: "Pics",
   },
   password: {
     type: String,
