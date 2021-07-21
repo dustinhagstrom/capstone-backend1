@@ -9,6 +9,7 @@ const path = require("path");
 const Team = require("../team/model/Team");
 const Player = require("../player/model/Player");
 const Card = require("../creditcard/model/Card");
+const Pics = require("../profilePics/model/Pics");
 
 router.post(
   "/make-player-and-cc-data",
@@ -33,7 +34,6 @@ router.post(
     const fakeEmail = faker.internet.email();
     const fakePassword = faker.internet.password();
     const fakeProfileImage = faker.image.avatar();
-    // https:/cdn.fakercloud.com/avatars/m_kalibry_128.jpg
 
     try {
       let salt = await bcrypt.genSalt(12);
@@ -45,7 +45,6 @@ router.post(
         process.env.MY_DIRECTORY,
         `uploads/fakerpics/${ourJpg}`
       );
-      console.log(profileImagePath);
       let getReq = axios({
         method: "get",
         url: fakeProfileImage,
@@ -53,12 +52,19 @@ router.post(
       }).then(function (response) {
         response.data.pipe(fs.createWriteStream(profileImagePath));
       });
+
+      const createPicData = new Pics({
+        img: {
+          data: profileImagePath,
+          contentType: "image/png",
+        },
+      });
+
       const createPlayerData = new Player({
         firstName: fakeFirstName,
         lastName: fakeLastName,
         username: fakeUsername,
         email: fakeEmail,
-        // profileImage: profileImageObj,
         password: hashedPassword,
       });
 
@@ -76,13 +82,17 @@ router.post(
 
       createPlayerData.team.push(foundTeam._id);
       createPlayerData.card.push(createCCData._id);
+      createPlayerData.pics = createPicData._id;
       foundTeam.teamPlayers.push(createPlayerData._id);
       createCCData.player.push(createPlayerData._id);
 
       await createPlayerData.save();
       await createCCData.save();
+      await createPicData.save();
       await foundTeam.save();
-      res.json({ payload: [createPlayerData, createCCData, foundTeam] });
+      res.json({
+        payload: [createPlayerData, createCCData, foundTeam, createPicData],
+      });
     } catch (e) {
       console.log(e);
     }

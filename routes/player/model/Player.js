@@ -15,7 +15,7 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
-  profileImage: {
+  pics: {
     type: mongoose.Schema.ObjectId,
     ref: "Pics",
   },
