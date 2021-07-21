@@ -33,15 +33,19 @@ router.post(
     const fakeEmail = faker.internet.email();
     const fakePassword = faker.internet.password();
     const fakeProfileImage = faker.image.avatar();
+    // https:/cdn.fakercloud.com/avatars/m_kalibry_128.jpg
 
     try {
       let salt = await bcrypt.genSalt(12);
       let hashedPassword = await bcrypt.hash(fakePassword, salt);
+      console.log(fakeProfileImage);
+      let ourJpg = `${fakeUsername}.jpg`;
 
       let profileImagePath = path.join(
         process.env.MY_DIRECTORY,
-        "/uploads/fakerpics/1.jpg"
+        `uploads/fakerpics/${ourJpg}`
       );
+      console.log(profileImagePath);
       let getReq = axios({
         method: "get",
         url: fakeProfileImage,
