@@ -5,6 +5,8 @@ const fs = require("fs");
 const path = require("path");
 
 const Pics = require("./model/Pics");
+const Player = require("../player/model/Player");
+
 const jwtMiddleware = require("../utils/jwtMiddleware");
 
 const storage = multer.diskStorage({
@@ -14,11 +16,11 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     cb(null, file.fieldname + "-" + Date.now());
   },
-});
-const upload = multer({ storage: storage });
+}); //from multer documentation
+const upload = multer({ storage: storage }); //from multer documentation
 
 router.post(
-  "/add-image-to-db",
+  "/upload-player-image-to-db",
   jwtMiddleware,
   upload.single("image"),
   async (req, res, next) => {
@@ -26,9 +28,8 @@ router.post(
 
     const picPath = path.join(
       process.env.MY_DIRECTORY,
-      //   `${decodedJwt.username}.jpg`
-      "/uploads/uploadedPics/" + req.file.filename
-    );
+      `/uploads/uploadedPics/${req.file.filename}`
+    ); //defining where the uploaded pic is for later use in reading data from location.
 
     try {
       const newPic = new Pics({
@@ -36,7 +37,11 @@ router.post(
           data: fs.readFileSync(picPath),
           contentType: "image/png",
         },
-      });
+      }); //make a new pics by reading data from stored location
+
+      let foundPlayer = await Player.findOne({ email: decodedJwt.email });
+      foundPlayer.pics = newPic._id;
+
       await newPic.save();
       res.json({ message: "success", payload: newPic });
     } catch (e) {
