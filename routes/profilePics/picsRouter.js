@@ -25,7 +25,7 @@ router.post(
   upload.single("image"),
   async (req, res, next) => {
     const { decodedJwt } = res.locals;
-
+    console.log("here");
     const picPath = path.join(
       process.env.MY_DIRECTORY,
       `/uploads/uploadedPics/${req.file.filename}`
@@ -49,4 +49,20 @@ router.post(
     }
   }
 );
+
+router.get("/player-image", jwtMiddleware, async (req, res, next) => {
+  const { decodedJwt } = res.locals;
+
+  try {
+    let foundPlayer = await Player.findOne({ email: decodedJwt.email })
+      .populate({
+        path: "pics",
+        model: Pics,
+        select: "-__v",
+      })
+      .select("-email -password -firstName -lastName -__v -_id -username");
+  } catch (e) {
+    next(e);
+  }
+});
 module.exports = router;
