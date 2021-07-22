@@ -25,25 +25,28 @@ router.post(
   upload.single("image"),
   async (req, res, next) => {
     const { decodedJwt } = res.locals;
-    console.log("here");
     const picPath = path.join(
       process.env.MY_DIRECTORY,
-      `/uploads/uploadedPics/${req.file.filename}`
+      `/uploads/uploadedPics/image`
     ); //defining where the uploaded pic is for later use in reading data from location.
+    // const img = fs.readFileSync(picPath);
+    // const encode_image = img.toString(64);
 
     try {
+      console.log("here");
+      //   console.log(encode_image);
       const newPic = new Pics({
         img: {
-          data: fs.readFileSync(picPath),
+          data: picPath,
           contentType: "image/png",
         },
       }); //make a new pics by reading data from stored location
 
       let foundPlayer = await Player.findOne({ email: decodedJwt.email });
-      foundPlayer.pics = newPic._id;
-
+      foundPlayer.pics.push(newPic._id);
+      await foundPlayer.save();
       await newPic.save();
-      res.json({ message: "success", payload: newPic });
+      res.json({ message: "success" });
     } catch (e) {
       next(e);
     }
@@ -54,15 +57,13 @@ router.get("/player-image", jwtMiddleware, async (req, res, next) => {
   const { decodedJwt } = res.locals;
 
   try {
-    let foundPlayer = await Player.findOne({ email: decodedJwt.email })
-      .populate({
-        path: "pics",
-        model: Pics,
-        select: "-__v",
-      })
-      .select("-email -password -firstName -lastName -__v -_id -username");
+    let imageToSend = await Pics.findOne({});
+    console.log(imageToSend.img.contentType);
+
+    res.json({ message: "success", payload: imageToSend });
   } catch (e) {
     next(e);
   }
 });
+
 module.exports = router;

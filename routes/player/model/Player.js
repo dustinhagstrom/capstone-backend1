@@ -15,9 +15,15 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
-  pics: {
-    type: mongoose.Schema.ObjectId,
-    ref: "Pics",
+  pics: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Pics",
+    },
+  ],
+  matchPictureToPlayer: {
+    //used to help match pics to person for faker
+    type: String,
   },
   password: {
     type: String,

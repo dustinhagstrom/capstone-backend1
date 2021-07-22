@@ -5,6 +5,8 @@ const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const axios = require("axios");
 const path = require("path");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 const Team = require("../team/model/Team");
 const Player = require("../player/model/Player");
@@ -35,7 +37,7 @@ router.post("/make-player-and-cc-data", async function (req, res, next) {
   try {
     let salt = await bcrypt.genSalt(12);
     let hashedPassword = await bcrypt.hash(fakePassword, salt);
-    let ourJpg = `${fakeUsername}.jpg`; //rename the faker url to fake username.jpg
+    let ourJpg = `${fakeFirstName}${fakeLastName}.png`; //rename the faker url to fake username.jpg
 
     let profileImagePath = path.join(
       process.env.MY_DIRECTORY,
@@ -51,7 +53,7 @@ router.post("/make-player-and-cc-data", async function (req, res, next) {
 
     const createPicData = new Pics({
       img: {
-        data: profileImagePath,
+        data: profileImagePath, //fs.readFileSync(req.file.path),
         contentType: "image/png",
       },
     }); //this makes new pics data by going to file location and getting the data that is stored there. the data is already a buffer.
@@ -61,6 +63,7 @@ router.post("/make-player-and-cc-data", async function (req, res, next) {
       lastName: fakeLastName,
       username: fakeUsername,
       email: fakeEmail,
+      matchPictureToPlayer: ourJpg,
       password: hashedPassword,
     });
 
@@ -87,11 +90,33 @@ router.post("/make-player-and-cc-data", async function (req, res, next) {
     await createPicData.save();
     await foundTeam.save();
     res.json({
-      payload: [createPlayerData, createCCData, foundTeam, createPicData],
+      payload: [createPlayerData, createCCData, foundTeam],
     });
   } catch (e) {
     console.log(e);
   }
 });
+
+//how can i loop through all the people and if they don't
+router.post(
+  "/store-pic",
+  upload.single("image"),
+  async function (req, res, next) {
+    try {
+      const createPicData = new Pics({
+        img: {
+          data: fs.readFileSync(
+            `${process.env.MY_DIRECTORY}/uploads/fakerpics/${req.body.path}`
+          ),
+          contentType: "image/png",
+        },
+      });
+      await createPicData.save();
+      res.json({ message: "success" });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
 
 module.exports = router;
