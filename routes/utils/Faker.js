@@ -6,7 +6,17 @@ const fs = require("fs");
 const axios = require("axios");
 const path = require("path");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+// const upload = multer({ dest: "uploads/" });
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/fakerpics");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+const upload = multer({ storage });
 
 const Team = require("../team/model/Team");
 const Player = require("../player/model/Player");
@@ -97,7 +107,7 @@ router.post("/make-player-and-cc-data", async function (req, res, next) {
   }
 });
 
-//how can i loop through all the people and if they don't
+//the following code i used with postman to
 router.post(
   "/store-pic",
   upload.single("image"),
@@ -106,7 +116,7 @@ router.post(
       const createPicData = new Pics({
         img: {
           data: fs.readFileSync(
-            `${process.env.MY_DIRECTORY}/uploads/fakerpics/${req.body.path}`
+            `${process.env.MY_DIRECTORY}/uploads/fakerpics/${req.file.originalname}`
           ),
           contentType: "image/png",
         },
@@ -119,4 +129,5 @@ router.post(
   }
 );
 
+// router.post("/store-pics", upload.array("images", array.length));
 module.exports = router;
