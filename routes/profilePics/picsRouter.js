@@ -26,8 +26,8 @@ router.post(
   async (req, res, next) => {
     const { decodedJwt } = res.locals;
     const picPath = path.join(
-      process.env.MY_DIRECTORY,
-      `/uploads/uploadedPics/${req.file.originalname}`
+      __dirname,
+      `../../../uploads/uploadedPics/${req.file.originalname}`
     ); //defining where the uploaded pic is for later use in reading data from location.
 
     try {

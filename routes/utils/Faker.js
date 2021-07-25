@@ -50,9 +50,10 @@ router.post("/make-player-and-cc-data", async function (req, res, next) {
     let ourJpg = `${fakeFirstName}${fakeLastName}.png`; //rename the faker url to fake username.jpg
 
     let profileImagePath = path.join(
-      process.env.MY_DIRECTORY,
-      `uploads/fakerpics/${ourJpg}`
+      __dirname,
+      `../../uploads/fakerpics/${ourJpg}`
     ); // this is the location in my files where the pic will go
+    console.log(profileImagePath);
     axios({
       method: "get",
       url: fakeProfileImage,
@@ -116,7 +117,7 @@ router.post(
       const createPicData = new Pics({
         img: {
           data: fs.readFileSync(
-            `${process.env.MY_DIRECTORY}/uploads/fakerpics/${req.file.originalname}`
+            `${__dirname}../../uploads/fakerpics/${req.file.originalname}`
           ),
           contentType: "image/png",
         },

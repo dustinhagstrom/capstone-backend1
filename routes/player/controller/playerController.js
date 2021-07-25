@@ -74,7 +74,7 @@ const addProfileImage = async function (req, res, next) {
   const imgObj = {
     profileImage: {
       data: fs.readFileSync(
-        path.join(process.env.MY_DIRECTORY, "/uploads/" + req.file.filename)
+        path.join(__dirname, "../../../uploads/" + req.file.filename)
       ),
       contentType: "image/jpg",
     },
