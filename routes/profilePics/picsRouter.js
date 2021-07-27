@@ -27,7 +27,7 @@ router.post(
     const { decodedJwt } = res.locals;
     const picPath = path.join(
       __dirname,
-      `../../../uploads/uploadedPics/${req.file.originalname}`
+      `../../uploads/uploadedPics/${req.file.originalname}`
     ); //defining where the uploaded pic is for later use in reading data from location.
 
     try {
@@ -39,10 +39,14 @@ router.post(
       }); //make a new pics by reading data from stored location
 
       let foundPlayer = await Player.findOne({ email: decodedJwt.email });
-      foundPlayer.pics.shift();
-      foundPlayer.pics.push(newPic._id);
-      await foundPlayer.save();
-      await newPic.save();
+      if (foundPlayer.pics.length > 1) {
+        foundPlayer.pics.shift();
+      }
+
+      await Pics.findByIdAndRemove({ _id: foundPlayer.pics[0] }); //delete the old user photo from db.
+      foundPlayer.pics.unshift(newPic._id); //push new id to player data
+      await foundPlayer.save(); //save new player info
+      await newPic.save(); //save new pic info
       res.json({ message: "success" });
     } catch (e) {
       next(e);
@@ -54,10 +58,11 @@ router.get("/player-image", jwtMiddleware, async (req, res, next) => {
   const { decodedJwt } = res.locals;
 
   try {
-    let imageToSend = await Pics.findOne({});
-    console.log(imageToSend);
+    let imageToSend = await Player.findOne({ email: decodedJwt.email });
 
-    res.json({ message: "success", payload: imageToSend });
+    let foundUserImage = await Pics.findById({ _id: imageToSend.pics[0] });
+
+    res.json({ message: "success", payload: foundUserImage });
   } catch (e) {
     next(e);
   }
