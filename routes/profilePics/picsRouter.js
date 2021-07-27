@@ -4,6 +4,7 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 
+const Team = require("../team/model/Team");
 const Pics = require("./model/Pics");
 const Player = require("../player/model/Player");
 
@@ -40,10 +41,10 @@ router.post(
 
       let foundPlayer = await Player.findOne({ email: decodedJwt.email });
       if (foundPlayer.pics.length > 1) {
-        foundPlayer.pics.shift();
+        foundPlayer.pics.shift(); //delete the old user photo from db and keep default img.
+        await Pics.findByIdAndRemove({ _id: foundPlayer.pics[0] });
       }
 
-      await Pics.findByIdAndRemove({ _id: foundPlayer.pics[0] }); //delete the old user photo from db.
       foundPlayer.pics.unshift(newPic._id); //push new id to player data
       await foundPlayer.save(); //save new player info
       await newPic.save(); //save new pic info
@@ -65,6 +66,28 @@ router.get("/player-image", jwtMiddleware, async (req, res, next) => {
     res.json({ message: "success", payload: foundUserImage });
   } catch (e) {
     next(e);
+  }
+});
+
+router.get("/team-images", jwtMiddleware, async (req, res, next) => {
+  const { decodedJwt } = res.locals;
+
+  try {
+    let teamMemberArray = [];
+    let teamPlayer = await Player.findOne({ email: decodedJwt.email });
+    let foundOurTeam = await Team.findById({ _id: teamPlayer.team[0] });
+
+    console.log(foundOurTeam);
+    for (const id of foundOurTeam.teamPlayers) {
+      let foundPlayer = await Player.findById({ _id: id }).select(
+        "-email -password -__v -_id -username -team -card"
+      );
+      teamMemberArray.push(foundPlayer);
+    }
+    console.log(teamMemberArray);
+    res.json({ message: "success", payload: teamMemberArray });
+  } catch (e) {
+    console.log(e);
   }
 });
 

@@ -21,10 +21,6 @@ const PlayerSchema = new mongoose.Schema({
       ref: "Pics",
     },
   ],
-  matchPictureToPlayer: {
-    //used to help match pics to person for faker
-    type: String,
-  },
   password: {
     type: String,
   },
