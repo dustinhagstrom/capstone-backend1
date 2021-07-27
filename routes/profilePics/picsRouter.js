@@ -76,11 +76,9 @@ router.get("/team-images", jwtMiddleware, async (req, res, next) => {
     let teamMemberArray = [];
     let teamPlayer = await Player.findOne({ email: decodedJwt.email });
     let foundOurTeam = await Team.findById({ _id: teamPlayer.team[0] });
-
-    console.log(foundOurTeam);
     for (const id of foundOurTeam.teamPlayers) {
       let foundPlayer = await Player.findById({ _id: id }).select(
-        "-email -password -__v -_id -username -team -card"
+        "-email -password -__v -_id -username -card"
       );
       teamMemberArray.push(foundPlayer);
     }

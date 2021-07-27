@@ -1,17 +1,14 @@
 const Player = require("../../player/model/Player");
 const Team = require("../model/Team");
 
-const loadTeamRoster = async function (req, res, next) {
+const loadTeam = async function (req, res, next) {
   try {
-    const { decodedJwt } = res.locals;
+    const { id } = req.params;
 
-    let payload = await Player.findOne({ email: decodedJwt.email })
-      .populate({
-        path: "team",
-        model: Player,
-        select: "-__v",
-      })
-      .select("-__v -team -_id -username -password");
+    let payload = await Team.findById({ _id: id }).select(
+      "-_id -__v -teamPlayers"
+    );
+    console.log(payload);
     res.json({ payload });
   } catch (e) {
     next(e);
@@ -31,4 +28,4 @@ const createNewTeam = async function (req, res, next) {
     next(e);
   }
 };
-module.exports = { loadTeamRoster, createNewTeam };
+module.exports = { loadTeam, createNewTeam };
