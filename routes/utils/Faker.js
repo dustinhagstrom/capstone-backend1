@@ -14,13 +14,13 @@ const Pics = require("../profilePics/model/Pics");
 router.post("/make-player-and-cc-data", async function (req, res, next) {
   let teamNames = [
     "The Karens",
-    "Ball Sharks",
-    "Nice Kicks",
-    "The Trolls",
-    "The Wizards",
-    "Unicorn Kickers",
-    "The Fireballs",
-    "The Bunters",
+    // "Ball Sharks",
+    // "Nice Kicks",
+    // "The Trolls",
+    // "The Wizards",
+    // "Unicorn Kickers",
+    // "The Fireballs",
+    // "The Bunters",
   ];
   const fakeFirstName = faker.name.firstName();
   const fakeLastName = faker.name.lastName();
@@ -85,7 +85,7 @@ router.post("/make-player-and-cc-data", async function (req, res, next) {
                         expDate: fakeExpDate,
                         code: fakeCode,
                       });
-                      let myRando = Math.floor(Math.random() * 8);
+                      let myRando = Math.floor(Math.random() * 1);
                       let foundTeam = await Team.findOne({
                         teamName: teamNames[myRando],
                       });

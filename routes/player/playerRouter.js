@@ -16,6 +16,7 @@ const {
   signup,
   login,
   addProfileImage,
+  deletePlayer,
 } = require("./controller/playerController");
 
 router.post("/signup", signup);
@@ -23,5 +24,7 @@ router.post("/signup", signup);
 router.post("/login", login);
 
 router.put("/add-profile-image", upload.single("image"), addProfileImage);
+
+router.delete("/delete-player-by-id/:id", deletePlayer);
 
 module.exports = router;

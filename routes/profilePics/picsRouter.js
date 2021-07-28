@@ -60,8 +60,11 @@ router.get("/player-image", jwtMiddleware, async (req, res, next) => {
 
   try {
     let imageToSend = await Player.findOne({ email: decodedJwt.email });
-
-    let foundUserImage = await Pics.findById({ _id: imageToSend.pics[0] });
+    if (imageToSend.pics[0]) {
+      foundUserImage = await Pics.findById({ _id: imageToSend.pics[0] });
+    } else {
+      foundUserImage = undefined;
+    }
 
     res.json({ message: "success", payload: foundUserImage });
   } catch (e) {
@@ -74,16 +77,34 @@ router.get("/team-images", jwtMiddleware, async (req, res, next) => {
 
   try {
     let teamMemberArray = [];
+    let teamMemberImagesArray = [];
     let teamPlayer = await Player.findOne({ email: decodedJwt.email });
-    let foundOurTeam = await Team.findById({ _id: teamPlayer.team[0] });
+    console.log(teamPlayer.team[0]);
+    let foundOurTeam = await Team.findById({
+      _id: teamPlayer.team[0],
+    });
+    console.log("83");
+    console.log(foundOurTeam);
     for (const id of foundOurTeam.teamPlayers) {
-      let foundPlayer = await Player.findById({ _id: id }).select(
-        "-email -password -__v -_id -username -card"
+      let findPlayerForPicsData = await Player.findById({ _id: id }).select(
+        "-email -password -__v -username -card"
       );
-      teamMemberArray.push(foundPlayer);
+      console.log("----------");
+      console.log(findPlayerForPicsData);
+      if (findPlayerForPicsData.pics[0]) {
+        let foundPics = await Pics.findById({
+          _id: findPlayerForPicsData.pics[0],
+        });
+        console.log(foundPics);
+        teamMemberImagesArray.push(foundPics.img);
+      }
+      teamMemberArray.push(findPlayerForPicsData);
     }
     console.log(teamMemberArray);
-    res.json({ message: "success", payload: teamMemberArray });
+    res.json({
+      message: "success",
+      payload: [teamMemberArray, teamMemberImagesArray],
+    });
   } catch (e) {
     console.log(e);
   }
