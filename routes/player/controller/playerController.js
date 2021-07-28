@@ -10,14 +10,14 @@ const Card = require("../../creditcard/model/Card");
 
 const signup = async function (req, res, next) {
   let teamNames = [
-    "The Karens",
     "Ball Sharks",
     "Nice Kicks",
     "The Trolls",
     "The Wizards",
     "Unicorn Kickers",
-    "The Fireballs",
     "The Bunters",
+    "The Karens",
+    "The Fireballs",
   ];
 
   const { firstName, lastName, username, email, password } = req.body;
@@ -42,10 +42,11 @@ const signup = async function (req, res, next) {
       email,
       password: hashedPassword,
     });
-    let myRando = Math.floor(Math.random() * 1);
+    let myRando = Math.floor(Math.random() * 8);
     let foundTeam = await Team.findOne({
       teamName: teamNames[myRando],
     });
+    foundTeam.teamPlayers.push(createdPlayer._id);
     createdPlayer.team.push(foundTeam._id);
     createdPlayer.pics.push(createPicData._id);
     let savedPlayer = await createdPlayer.save();
