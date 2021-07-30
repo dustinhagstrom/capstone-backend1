@@ -151,9 +151,20 @@ const deletePlayer = async function (req, res, next) {
   }
 };
 
+const getPlayer = async function (req, res, next) {
+  try {
+    const { decodedJwt } = res.locals;
+    const foundPlayer = await Player.findOne({ email: decodedJwt.email });
+    res.json({ message: "success", payload: foundPlayer });
+  } catch (e) {
+    next(e);
+  }
+};
+
 module.exports = {
   signup,
   login,
   addProfileImage,
   deletePlayer,
+  getPlayer,
 };

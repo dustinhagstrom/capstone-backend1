@@ -12,11 +12,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+const jwtMiddleware = require("../utils/jwtMiddleware");
+
 const {
   signup,
   login,
   addProfileImage,
   deletePlayer,
+  getPlayer,
 } = require("./controller/playerController");
 
 router.post("/signup", signup);
@@ -26,5 +29,7 @@ router.post("/login", login);
 router.put("/add-profile-image", upload.single("image"), addProfileImage);
 
 router.delete("/delete-player-by-id/:id", deletePlayer);
+
+router.get("/get-player", jwtMiddleware, getPlayer);
 
 module.exports = router;
