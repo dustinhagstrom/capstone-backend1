@@ -11,13 +11,13 @@ const Card = require("../../creditcard/model/Card");
 const signup = async function (req, res, next) {
   let teamNames = [
     "Ball Sharks",
-    "Nice Kicks",
-    "The Trolls",
-    "The Wizards",
-    "Unicorn Kickers",
-    "The Bunters",
-    "The Karens",
-    "The Fireballs",
+    // "Nice Kicks",
+    // "The Trolls",
+    // "The Wizards",
+    // "Unicorn Kickers",
+    // "The Bunters",
+    // "The Karens",
+    // "The Fireballs",
   ];
 
   const { firstName, lastName, username, email, password } = req.body;
@@ -42,7 +42,7 @@ const signup = async function (req, res, next) {
       email,
       password: hashedPassword,
     });
-    let myRando = Math.floor(Math.random() * 8);
+    let myRando = Math.floor(Math.random() * 1);
     let foundTeam = await Team.findOne({
       teamName: teamNames[myRando],
     });
@@ -134,7 +134,7 @@ const deletePlayer = async function (req, res, next) {
     });
     let foundTeam = await Team.findById({ _id: deletedPlayer.team[0] });
     let filteredTeam = foundTeam.teamPlayers.filter(
-      (teamMember) => teamMember.toString() !== deletedPlayer._id.toString()
+      (teamMember) => teamMember.toString() !== deletedPlayer._id.toString() //the .toString() is needed here or else does not work!!!
     );
     console.log(filteredTeam);
     foundTeam.teamPlayers = filteredTeam;

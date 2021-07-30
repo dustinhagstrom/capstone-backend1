@@ -1,10 +1,10 @@
-const faker = require("faker");
+const faker = require("faker"); //faker npm
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const fs = require("fs");
-const axios = require("axios");
-const path = require("path");
+const bcrypt = require("bcryptjs"); //bcryptjs npm
+const fs = require("fs"); //built into node already
+const axios = require("axios"); //axios npm
+const path = require("path"); //built into node already
 const multer = require("multer"); //file handling middleware module
 
 const storage = multer.diskStorage({
@@ -13,7 +13,8 @@ const storage = multer.diskStorage({
     cb(null, "uploads/fakerpics");
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    cb(null, file.originalname); //docs says "file.filename", but can change to fit
+    //app and the data we have
   },
 });
 const upload = multer({ storage }); //this is from multer docs
@@ -64,13 +65,13 @@ router.post(
     let teamNames = [
       //make this a dynamic get req for teams from db in future
       "Ball Sharks",
-      "Nice Kicks",
-      "The Trolls",
-      "The Wizards",
-      "Unicorn Kickers",
-      "The Bunters",
-      "The Karens",
-      "The Fireballs",
+      // "Nice Kicks",
+      // "The Trolls",
+      // "The Wizards",
+      // "Unicorn Kickers",
+      // "The Bunters",
+      // "The Karens",
+      // "The Fireballs",
     ];
     const { fakeFirstName, fakeLastName } = res.locals;
 
@@ -125,7 +126,7 @@ router.post(
         code: fakeCode,
       });
 
-      let myRando = Math.floor(Math.random() * 8);
+      let myRando = Math.floor(Math.random() * 1);
 
       let foundTeam = await Team.findOne({ teamName: teamNames[myRando] });
 
